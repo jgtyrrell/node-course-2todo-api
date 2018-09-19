@@ -1,4 +1,4 @@
-const {MongoClient, Server, ObjectID} = require('mongodb');
+const {MongoClient, ObjectID} = require('mongodb');
 
 MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, mongoClient) => {
 	if (err) {
