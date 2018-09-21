@@ -15,7 +15,6 @@ app.post('/todos', (req, res) => {
 	todo.save().then((doc) =>{
 		res.send(doc);
 	}).catch((err) => {
-		console.log('Unable to save todo', err);
 		res.status(400).send(err);
 	});
 });
@@ -23,6 +22,8 @@ app.post('/todos', (req, res) => {
 app.listen(3000, () => {
 	console.log('Server is running on port 3000');
 });
+
+module.exports.app = app;
 
 // let user = new User({
 // 	email: 'phil@foo.com '
