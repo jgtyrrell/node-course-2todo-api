@@ -1,14 +1,17 @@
 const request = require('supertest');
 const expect = require('expect');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
-const todos  = [
-    {text: "Test todo 1"},
-    {text: "Test todo 2"},
-    {text: "Test todo 3"},
-];
+const todos  = [{
+    _id: new ObjectID(),
+    text: "Test todo 1"
+}, {
+    _id: new ObjectID(),
+    text: "Test todo 2"
+}];
 
 // Empty the todos collection before test is run and add some seed test data.
 beforeEach((done) => {
@@ -52,7 +55,7 @@ describe('POST /todos', () => {
                 }
 
                 Todo.find().then((todos) => {
-                    expect(todos.length).toBe(3);
+                    expect(todos.length).toBe(2);
                     done();
                 }).catch((err) => done(err));
             });
@@ -65,8 +68,36 @@ describe('GET /todos', () => {
             .get('/todos')
             .expect(200)
             .expect((res) => {
-                expect(res.body.todos.length).toBe(3);
+                expect(res.body.todos.length).toBe(2);
             })
+            .end(done);
+    });
+});
+
+describe('GET /todos/:id', () => {
+    it('should return todo doc', (done) => {
+        request(app)
+            .get(`/todos/${todos[0]._id.toHexString()}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(todos[0].text);
+            })
+            .end(done);
+    });
+
+    it('should return 404 if todo not found', (done) => {
+        let hexId = new ObjectID().toHexString();
+        request(app)
+            .get(`/todos/${hexId}`)
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 for invalid object IDs', (done) => {
+        let id = 'abc123';
+        request(app)
+            .get(`/todos/${id}`)
+            .expect(404)
             .end(done);
     });
 });
