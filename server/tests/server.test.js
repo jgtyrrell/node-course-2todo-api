@@ -5,15 +5,18 @@ const {ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+// Seed data
 const todos  = [{
     _id: new ObjectID(),
     text: "Test todo 1"
 }, {
     _id: new ObjectID(),
-    text: "Test todo 2"
+    text: "Test todo 2",
+    completed: true,
+    completedAt: new Date().getTime()
 }];
 
-// Empty the todos collection before test is run and add some seed test data.
+// Empty the todos collection before each test is run and add seed data.
 beforeEach((done) => {
     Todo.deleteMany({}).then(() => {
         return Todo.insertMany(todos);
@@ -105,7 +108,6 @@ describe('GET /todos/:id', () => {
 describe('DELETE /todos/:id', () => {
     it('should remove a todo', (done) => {
         let hexId = todos[1]._id.toHexString();
-
         request(app)
             .delete(`/todos/${hexId}`)
             .expect(200)
@@ -140,5 +142,60 @@ describe('DELETE /todos/:id', () => {
             .delete(`/todos/${id}`)
             .expect(404)
             .end(done);
+    });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should update the todo', (done) => {
+        // grab id of first todo
+        // update text, set completed to true
+        // 200
+        // text is changed, completed is true, completedAt is a number. toBeA
+        let hexId = todos[0]._id.toHexString();
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: 'Updated first todo text from test script',
+                completed: true
+            })
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Todo.findById(hexId).then((todo) => {
+                    expect(todo.text).toNotEqual(todos[0].text);
+                    expect(todo.completed).toBe(true);
+                    expect(todo.completedAt).toBeA('number');
+                    done();
+                }).catch((err) => done(err));
+            });
+    });
+
+    it('should clear completedAt when todo is not completed', (done) => {
+        // grab id of second todo
+        // update text, set completed to false
+        // 200
+        // text is changed, completed is false, completedAt is null. toNotExist
+        let hexId = todos[1]._id.toHexString();
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: 'Updated second todo text from test script',
+                completed: false
+            })
+            .expect(200)
+            .end((err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                Todo.findById(hexId).then((todo) => {
+                    expect(todo.text).toNotEqual(todos[1].text);
+                    expect(todo.completed).toBe(false);
+                    expect(todo.completedAt).toNotExist();
+                    done();
+                }).catch((err) => done(err));
+            });
+
     });
 });
