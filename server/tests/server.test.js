@@ -147,10 +147,6 @@ describe('DELETE /todos/:id', () => {
 
 describe('PATCH /todos/:id', () => {
     it('should update the todo', (done) => {
-        // grab id of first todo
-        // update text, set completed to true
-        // 200
-        // text is changed, completed is true, completedAt is a number. toBeA
         let hexId = todos[0]._id.toHexString();
         request(app)
             .patch(`/todos/${hexId}`)
@@ -173,10 +169,6 @@ describe('PATCH /todos/:id', () => {
     });
 
     it('should clear completedAt when todo is not completed', (done) => {
-        // grab id of second todo
-        // update text, set completed to false
-        // 200
-        // text is changed, completed is false, completedAt is null. toNotExist
         let hexId = todos[1]._id.toHexString();
         request(app)
             .patch(`/todos/${hexId}`)
