@@ -1,5 +1,6 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 // Basic hashing using a one-way algorithim
 // var message = 'I am user number 3';
@@ -27,12 +28,27 @@ const jwt = require('jsonwebtoken');
 //     console.log('Data was changed. Do not trust!');
 // }
 
-var data = {
-    id: 10
-};
+// var data = {
+//     id: 10
+// };
 
-var token = jwt.sign(data, 'abc123');
-console.log('Token', token);
+// var token = jwt.sign(data, 'abc123');
+// console.log('Token', token);
 
-var decoded = jwt.verify(token, 'abc123');
-console.log('Decoded', decoded);
+// var decoded = jwt.verify(token, 'abc123');
+// console.log('Decoded', decoded);
+
+// Hashing a password using bcrypt
+var password = 'abc123';
+
+// bcrypt.genSalt(10, (err, salt) => {
+//     bcrypt.hash(password, salt, (err, hash) => {
+//         console.log(hash);
+//     });
+// });
+
+var hashedPassword = '$2a$10$YQsoBlN2uE29AnhZs7f1qeFiajlJlqFC4cElZ5RzmXNQ3GrEGAwu2';
+
+bcrypt.compare(password, hashedPassword, (err, res) => {
+    console.log(res);
+});
