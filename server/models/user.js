@@ -33,6 +33,8 @@ const UserSchema = new mongoose.Schema({
 	}]
 });
 
+// Instance methods
+
 // Override mongoose toJSON in order to return only selected fields for user.
 UserSchema.methods.toJSON = function () {
 	var user = this;
@@ -53,12 +55,14 @@ UserSchema.methods.generateAuthToken = function () {
 
 UserSchema.methods.removeToken = function (token) {
 	var user = this;
-	return user.update({
+	return user.updateOne({
 		$pull: {
 			tokens: {token}
 		}
 	});
 };
+
+// Static/object methods
 
 UserSchema.statics.findByToken = function (token) {
 	var User = this; // Capital U
