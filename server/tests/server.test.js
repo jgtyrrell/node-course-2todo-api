@@ -9,8 +9,8 @@ const {User} = require('./../models/user');
 const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 
 // Empty the todos collection before each test is run and add seed data.
-beforeEach(populateTodos);
 beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 describe('POST /todos', () => {
     it('should create a new todo', (done) => {
