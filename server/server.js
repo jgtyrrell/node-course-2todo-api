@@ -117,12 +117,13 @@ app.get('/users/me', authenticate, (req, res) => {
 });
 
 // POST /users/login {email, password}
+// Logs in a user.
 app.post('/users/login', (req, res) => {
 	const body = _.pick(req.body, ['email', 'password']);
 	User.findByCredentials(body.email, body.password).then((user) => {
 		return user.generateAuthToken().then((token) => {
 			res.header('x-auth', token).send(user);
-		});
+		}); 
 	}).catch((err) => res.status(400).send());
 });
 
